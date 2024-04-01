@@ -9,7 +9,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: 'Checkout repo (default branch)'
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
               with:
                   # fetch all history for all branches:
                   fetch-depth: 0
@@ -19,14 +19,13 @@ jobs:
                   for abranch in $(git branch -a | grep -v HEAD | grep remotes | sed "s/remotes\/origin\///g"); do git checkout $abranch ; done
                   git checkout $default_branch
                   git branch -a
-            - name: 'Setup node 18'
-              uses: actions/setup-node@v3
+            - name: 'Setup node 20'
+              uses: actions/setup-node@v4
               with:
-                  node-version: 18.x
+                  node-version: 20.x
             - name: 'Sync repo to Protocol Land'
-              run: npx @protocol.land/sync
+              run: NODE_OPTIONS="--max-old-space-size=4096" npx @protocol.land/sync
               env:
-                  NODE_OPTIONS: --max-old-space-size=4096
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   REPO_TITLE: ${{ github.event.repository.name }}
                   REPO_DESCRIPTION: ${{ github.event.repository.description }}
